@@ -1,14 +1,12 @@
 import React from 'react';
-import { Button } from './components/Button';
+import { ExperienceBar } from './components/ExperienceBar';
+
+import './styles/global.css';
 
 function App() {
   return (
-    <div>
-      <Button color='red'>
-        Botão1 
-        </Button>
-      <Button color='blue'>Botão2</Button>
-      <Button color='green'>Botão3</Button>
+    <div className='container'>
+      <ExperienceBar/>
     </div>
   );
 }
