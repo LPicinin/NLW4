@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import React from 'react'
+import { ChallengeBox } from '../components/ChallengeBox'
 import { CompleteChallanges } from '../components/CompleteChallenges'
 import { Countdown } from '../components/Countdown'
 import { ExperienceBar } from '../components/ExperienceBar'
@@ -8,7 +9,7 @@ import { Profile } from '../components/Profile'
 import styles from '../styles/pages/Home.module.css'
 
 
-//https://youtu.be/7ceWRavb6Ac?t=3638
+//https://youtu.be/ArqCBqN7zzc
 
 
 export default function Home() {
@@ -24,7 +25,9 @@ export default function Home() {
               <CompleteChallanges/>
               <Countdown/>
             </div>
-            <div></div>
+            <div>
+              <ChallengeBox/>
+            </div>
           </section>
         </div>
   )
