@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import { getCustomRepository } from "typeorm";
-import { SurveyUser } from "../models/SurveyUser";
 import { SurveysRepository } from "../repositories/SurveysRepository";
 import { SurveysUsersRepository } from "../repositories/SurveysUsersRepository";
 import { UsersRepository } from "../repositories/UsersRepository";
+import { resolve } from 'path'
 import SendMailServices from "../services/SendMailServices";
-
 class SendMailController {
     async execute(request: Request, response: Response) {
         const { email, survey_id } = request.body
@@ -14,35 +13,53 @@ class SendMailController {
         const surveysRepository = getCustomRepository(SurveysRepository)
         const surveysUsersRepository = getCustomRepository(SurveysUsersRepository)
 
-        const userAlreadyExists = await usersRepository.findOne({email})
+        const user = await usersRepository.findOne({email})
 
-        if(!userAlreadyExists)
+        if(!user)
         {
             return response.status(400).json({
                 error: "User does not exists"
             })
         }
 
-        const surveyAlreadyExists = await surveysRepository.findOne({id:survey_id})
+        const survey = await surveysRepository.findOne({id:survey_id})
 
-        if(!surveyAlreadyExists)
+        if(!survey)
         {
             return response.status(400).json({
                 error: "Survey does not exists"
             })
         }
 
+        const variables = {
+            name: user.name,
+            title: survey.title,
+            description: survey.description, 
+            user_id: user.id,
+            link: process.env.URL_MAIL
+        }
+        const npsPath = resolve(__dirname, '..', 'views', 'emails', 'npsEmail.hbs')
+
+        const surveyUserAlreadyExistis = await surveysUsersRepository.findOne({
+            where:[{user_id: user.id}, {value: null}]
+        })
+
+        if(surveyUserAlreadyExistis)
+        {
+            await SendMailServices.execute(email, survey.title, variables, npsPath)
+        }
+
         //salvar as informações na tabela save user
         const surveyUser = surveysUsersRepository.create({
-            user_id: userAlreadyExists.id,
+            user_id: user.id,
             survey_id
         })
 
         await surveysUsersRepository.save(surveyUser)
         //enviar email para o usuário
-        await SendMailServices.execute(email, surveyAlreadyExists.title, surveyAlreadyExists.description)
+        await SendMailServices.execute(email, survey.title, variables, npsPath)
 
         return response.json(surveyUser)
     }
 }
-export { SendMailController }
+export { SendMailController };

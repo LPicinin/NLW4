@@ -21,7 +21,9 @@ const sendMailControler = new SendMailController()
 router.post("/users", userController.create)
 router.post("/surveys", surveysController.create)
 router.post("/sendMail", sendMailControler.execute)
+
 router.get("/surveys", surveysController.show)
+router.get("/users", userController.show)
 
 
 export {router}

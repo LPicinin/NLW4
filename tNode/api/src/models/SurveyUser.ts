@@ -17,7 +17,7 @@ class SurveyUser
     value:number;
     
     @CreateDateColumn()
-    created_et:Date;
+    create_et:Date;
 
     constructor() {
         if(!this.id)
